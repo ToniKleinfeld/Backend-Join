@@ -1,12 +1,6 @@
 from rest_framework import serializers
-# from user_auth_app.models import UserProfile
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = UserProfile
-#         fields = ["user","email"]
-
 
 class RegistrationsSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
@@ -36,3 +30,19 @@ class RegistrationsSerializer(serializers.ModelSerializer):
         account.set_password(pw)
         account.save()
         return account
+    
+
+class CustomAuthTokenSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(style={'input_type': 'password'}, trim_whitespace=False)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        user = authenticate(username=email, password=password)  # E-Mail wird als username übergeben
+        if not user:
+            raise serializers.ValidationError("Falsche E-Mail oder Passwort.", code='authorization')
+
+        attrs['user'] = user
+        return attrs
