@@ -9,6 +9,9 @@ from .serializers import  RegistrationsSerializer ,CustomAuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class RegestrationView(APIView):
+    """
+    Regestration des Benutzer mit Name, Email ,Passwort und Passwortkontrolle.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -29,6 +32,9 @@ class RegestrationView(APIView):
         return Response(data)
     
 class CustomLoginView(ObtainAuthToken):
+    """
+    Login des Benutzer mit Email ,Passwort als return obj mit token.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
