@@ -40,8 +40,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         user = authenticate(username=email, password=password)  # E-Mail wird als username übergeben
-        # if not user:
-        #     raise serializers.ValidationError("Falsche E-Mail oder Passwort.", code='authorization')
+
         if user is None:
             raise serializers.ValidationError(
                 {"error": "Falsche E-Mail oder Passwort."},

@@ -25,15 +25,13 @@ class RegestrationView(APIView):
         if serializer.is_valid():
             saved_account = serializer.save()
             token, created = Token.objects.get_or_create(user=saved_account)
-            data = {
-                "token": token.key,
-                "username": saved_account.username,
-                "email": saved_account.email,
-            }
-        else:
-            data = serializer.errors
 
-        return Response(data)
+            return Response(
+                {"token": token.key, "username": saved_account.username, "email": saved_account.email},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomLoginView(ObtainAuthToken):
