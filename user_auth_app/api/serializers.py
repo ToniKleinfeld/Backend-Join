@@ -23,8 +23,7 @@ class RegistrationsSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error':'Password don\'t match!'})
         
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({'error': 'Email is already in use!'})
-        
+            raise serializers.ValidationError({'error': 'Email is already in use!'})                  
         
         account = User(email = self.validated_data['email'], username = self.validated_data['username'])
         account.set_password(pw)
@@ -41,8 +40,13 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         user = authenticate(username=email, password=password)  # E-Mail wird als username übergeben
-        if not user:
-            raise serializers.ValidationError("Falsche E-Mail oder Passwort.", code='authorization')
+        # if not user:
+        #     raise serializers.ValidationError("Falsche E-Mail oder Passwort.", code='authorization')
+        if user is None:
+            raise serializers.ValidationError(
+                {"error": "Falsche E-Mail oder Passwort."},
+                code='authorization'
+            )
 
         attrs['user'] = user
         return attrs

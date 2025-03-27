@@ -3,15 +3,19 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+
 # from user_auth_app.models import UserProfile
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializers import  RegistrationsSerializer ,CustomAuthTokenSerializer
+from .serializers import RegistrationsSerializer, CustomAuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
 
 class RegestrationView(APIView):
     """
     Regestration des Benutzer mit Name, Email ,Passwort und Passwortkontrolle.
     """
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -30,26 +34,25 @@ class RegestrationView(APIView):
             data = serializer.errors
 
         return Response(data)
-    
+
+
 class CustomLoginView(ObtainAuthToken):
     """
-    Login des Benutzer mit Email ,Passwort als return obj mit token.
+    Login des Benutzer mit Email ,Passwort als return obj mit token oder Error.
     """
+
     permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = CustomAuthTokenSerializer(data=request.data)
 
-        data = {}
         if serializer.is_valid():
-            user = serializer.validated_data['user']
+            user = serializer.validated_data["user"]
             token, created = Token.objects.get_or_create(user=user)
-            data = {
-                'token': token.key,
-                'username': user.username,
-                'email': user.email
-            }
-        else:
-            data=serializer.errors
 
-        return Response(data)
+            return Response(
+                {"token": token.key, "username": user.username, "email": user.email},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
