@@ -6,7 +6,11 @@ from rest_framework.response import Response
 
 # from user_auth_app.models import UserProfile
 from rest_framework.authtoken.views import ObtainAuthToken
-from .serializers import RegistrationsSerializer, CustomAuthTokenSerializer
+from .serializers import (
+    RegistrationsSerializer,
+    CustomAuthTokenSerializer,
+    TokenVerifySerializer,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
@@ -27,7 +31,11 @@ class RegestrationView(APIView):
             token, created = Token.objects.get_or_create(user=saved_account)
 
             return Response(
-                {"token": token.key, "username": saved_account.username, "email": saved_account.email},
+                {
+                    "token": token.key,
+                    "username": saved_account.username,
+                    "email": saved_account.email,
+                },
                 status=status.HTTP_200_OK,
             )
 
@@ -53,4 +61,25 @@ class CustomLoginView(ObtainAuthToken):
                 status=status.HTTP_200_OK,
             )
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyTokenView(APIView):
+    """
+    Überprüfung, ob ein Token vorhanden ist.
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = TokenVerifySerializer(data=request.data)
+        if serializer.is_valid():
+            token_key = serializer.validated_data["token"]
+            try:
+                token = Token.objects.get(key=token_key)
+            except Token.DoesNotExist:
+                return Response(
+                    {"error": "Invalid token."}, status=status.HTTP_401_UNAUTHORIZED
+                )
+            return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

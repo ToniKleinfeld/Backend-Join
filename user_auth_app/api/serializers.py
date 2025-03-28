@@ -49,3 +49,12 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+class TokenVerifySerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    def validate_token(self, value):
+        if not value:
+            raise serializers.ValidationError("Token is required.")
+        
+        return value
