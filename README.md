@@ -2,9 +2,6 @@
 
 <p>
   <img alt="Version" src="https://img.shields.io/badge/Framework-Django-lightgreen?logo=django" />
-  <a href="https://github.com/ToniKleinfeld/Backend-Join?tab=MIT-1-ov-file">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
-  </a>
 </p>
 
 > My first steps with own backend for Join.
