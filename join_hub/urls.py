@@ -22,5 +22,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/join/', include('join_app.api.urls')),
     path('api/auth/', include('user_auth_app.api.urls')),
-    path('api-auth',include('rest_framework.urls'))         #anzeige für login im reest_framework zum testen / implementieren gut
 ]
