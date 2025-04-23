@@ -1,4 +1,4 @@
-# TODO: Django / DRF Backend
+# TODO: JOIN Django / DRF Backend
 
 ## 📦 Models
 
@@ -73,10 +73,3 @@ urlpatterns = [
 ]
 # Nicht final!
 ```
-
-
-## 🧪 Tests
-
-- [ ] Unit-Tests für Models
-- [ ] API-Tests für Endpunkte
-- [ ] Auth-Tests für geschützte Endpunkte

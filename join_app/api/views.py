@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
-from .serializers import UserSerializer, ContactSerializer, UserWithContactsSerializer , TaskSerializer, TaskWriteSerializer
+from .serializers import ContactSerializer, UserWithContactsSerializer , TaskSerializer, TaskWriteSerializer
 from join_app.models import Contact , Task
 
 

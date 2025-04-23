@@ -15,14 +15,6 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "email", "phone"]
 
 
-class UserWithContactsSerializer(UserSerializer, serializers.ModelSerializer):
-    contacts = ContactSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ["id", "username", "email", "contacts"]
-
-
 class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubTask
@@ -52,8 +44,8 @@ class TaskSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         subtasks_data = validated_data.pop("subtasks", [])
         assigned_users_data = validated_data.pop("assigned_users", [])
-        creator = self.context.get("request").user
-        task = Task.objects.create(creator=creator, **validated_data)
+
+        task = Task.objects.create(**validated_data)
 
         if assigned_users_data:
             task.assigned_users.set(assigned_users_data)
@@ -84,10 +76,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskWriteSerializer(serializers.ModelSerializer):
-    subtasks = serializers.ListField(
-        child=serializers.DictField(child=serializers.CharField(), allow_empty=True),
-        required=False,
-        write_only=True,
+    subtasks = SubTaskSerializer(
+        many=True, required=False, write_only=True
     )
     assigned_users = serializers.ListField(
         child=serializers.IntegerField(), required=False, write_only=True
@@ -133,9 +123,8 @@ class TaskWriteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         subtasks_data = validated_data.pop("subtasks", [])
         assigned_user_ids = validated_data.pop("assigned_users", [])
-        creator = self.context.get("request").user
 
-        task = Task.objects.create(creator=creator, **validated_data)
+        task = Task.objects.create(**validated_data)
 
         if assigned_user_ids:
             assigned_users = User.objects.filter(id__in=assigned_user_ids)
@@ -144,8 +133,44 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         for subtask_item in subtasks_data:
             SubTask.objects.create(
                 task=task,
-                title=subtask_item.get("task", ""),
+                title=subtask_item.get("title", ""),
                 done=subtask_item.get("done", False),
             )
             
         return task
+    
+    def update(self, instance, validated_data):
+        subtasks_data = validated_data.pop("subtasks", None)
+        assigned_user_ids = validated_data.pop("assigned_users", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if assigned_user_ids is not None:
+            assigned_user = User.objects.filter(id__in=assigned_user_ids)
+            instance.assigned_users.set(assigned_user)
+
+        
+        if subtasks_data is not None:
+            instance.subtasks.all().delete()
+            for subtask_item in subtasks_data:
+                SubTask.objects.create(
+                    task=instance,
+                    title=subtask_item["title"],
+                    done=subtask_item["done"],
+                )
+
+        return instance
+    # TODO: Macht das so überhaupt sin? die Substask kann man zwar mit put und Patch jetzt überschreiben , sollten aber auch einzeln löschbar sein .. ich denke hier solle ein eigener Serializer eingebunden werden , assigned_user sind nicht mehr entfernbar
+
+class UserWithContactsSerializer(UserSerializer, serializers.ModelSerializer):
+    contacts = ContactSerializer(many=True, read_only=True)
+    created_tasks = TaskSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "contacts","assigned_tasks","created_tasks"]
+
+
+# TODO: Momentan noch PATCH der Subtasks , bearbeiten , löschen hinzufügen zum task  hier evtl eigener Serializer?
