@@ -1,7 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions
-from .serializers import ContactSerializer, UserWithContactsSerializer , TaskSerializer, TaskWriteSerializer
-from join_app.models import Contact , Task
+from .serializers import (
+    ContactSerializer,
+    UserWithContactsSerializer,
+    TaskSerializer,
+    SubTaskSerializer,
+    TaskWriteSerializer,
+)
+from join_app.models import Contact, Task, SubTask
 
 
 class UserView(viewsets.ReadOnlyModelViewSet):
@@ -18,15 +24,28 @@ class ContactViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
-    
+
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return TaskWriteSerializer
         return TaskSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
     # TODO: Prüfung funktion , einbindung
+
+
+class SubTaskViewSet(viewsets.ModelViewSet):
+    serializer_class = SubTaskSerializer
+
+    def get_queryset(self):
+        task_pk = self.kwargs.get("task_pk")
+        return SubTask.objects.filter(task_id=task_pk)
+
+    def perform_create(self, serializer):
+        task_pk = self.kwargs.get("task_pk")
+        serializer.save(task_id=task_pk)

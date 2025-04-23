@@ -18,7 +18,8 @@ class ContactSerializer(serializers.ModelSerializer):
 class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubTask
-        fields = ["id", "title", "done"]
+        fields = ["id","task", "title", "done"]
+        read_only_fields = ["task"]
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -139,30 +140,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
             
         return task
     
-    def update(self, instance, validated_data):
-        subtasks_data = validated_data.pop("subtasks", None)
-        assigned_user_ids = validated_data.pop("assigned_users", None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        if assigned_user_ids is not None:
-            assigned_user = User.objects.filter(id__in=assigned_user_ids)
-            instance.assigned_users.set(assigned_user)
-
-        
-        if subtasks_data is not None:
-            instance.subtasks.all().delete()
-            for subtask_item in subtasks_data:
-                SubTask.objects.create(
-                    task=instance,
-                    title=subtask_item["title"],
-                    done=subtask_item["done"],
-                )
-
-        return instance
-    # TODO: Macht das so überhaupt sin? die Substask kann man zwar mit put und Patch jetzt überschreiben , sollten aber auch einzeln löschbar sein .. ich denke hier solle ein eigener Serializer eingebunden werden , assigned_user sind nicht mehr entfernbar
+    # TODO: nur Tasks einem user anzeigen lassen , welche er erstellt oder zugewiesen wurde
 
 class UserWithContactsSerializer(UserSerializer, serializers.ModelSerializer):
     contacts = ContactSerializer(many=True, read_only=True)
@@ -171,6 +149,3 @@ class UserWithContactsSerializer(UserSerializer, serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "contacts","assigned_tasks","created_tasks"]
-
-
-# TODO: Momentan noch PATCH der Subtasks , bearbeiten , löschen hinzufügen zum task  hier evtl eigener Serializer?
