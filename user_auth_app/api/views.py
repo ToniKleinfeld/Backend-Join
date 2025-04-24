@@ -8,7 +8,6 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from .serializers import (
     RegistrationsSerializer,
     CustomAuthTokenSerializer,
-    TokenVerifySerializer,
 )
 from rest_framework import status
 
@@ -91,19 +90,18 @@ class VerifyTokenView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = TokenVerifySerializer(data=request.data)
-        if serializer.is_valid():
-            token_key = serializer.validated_data["token"]
-            try:
-                token = Token.objects.get(key=token_key)
-            except Token.DoesNotExist:
-                return Response(
-                    {"error": "Invalid token."}, status=status.HTTP_401_UNAUTHORIZED
-                )
-            return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        token_key = request.COOKIES.get('auth_token')
+        if not token_key:
+            return Response({'detail': 'No token cookie.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# TODO: Vertify noch nötig , wenn HTTP only token ?`
+        try:
+            Token.objects.get(key=token_key)
+        except Token.DoesNotExist:
+            return Response({'detail': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response({'detail': 'Token is valid.'}, status=status.HTTP_200_OK)
+
+# TODO: testen funktion
 
 class LogoutView(APIView):
     permission_classes = [AllowAny]
