@@ -13,9 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 
-env = environ.Env(
-    DEBUG=(bool, False)
-)
+env = environ.Env(DEBUG=(bool, False))
 
 environ.Env.read_env()
 
@@ -26,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -43,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'corsheaders',
+    "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
     "user_auth_app",
@@ -135,17 +133,19 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = [
-    env('CORS_ALLOWED_ORIGINS'),
+    env("CORS_ALLOWED_ORIGINS"),
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication"
+        "join_hub.cookieauth.CookieTokenAuthentication",
+        "join_hub.cookieauth.ExpiringCookieTokenAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }
 
 AUTHENTICATION_BACKENDS = [
-    'join_hub.authentication.EmailAuthBackend',  
-    'django.contrib.auth.backends.ModelBackend', 
+    "join_hub.authentication.EmailAuthBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]

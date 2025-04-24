@@ -36,7 +36,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
-    # TODO: Prüfung funktion , einbindung
+    # TODO: Prüfung funktion , einbindung query in tasks filter?
 
 
 class SubTaskViewSet(viewsets.ModelViewSet):

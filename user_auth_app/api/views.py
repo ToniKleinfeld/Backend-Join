@@ -1,4 +1,3 @@
-from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
@@ -11,7 +10,6 @@ from .serializers import (
     CustomAuthTokenSerializer,
     TokenVerifySerializer,
 )
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 
@@ -30,21 +28,31 @@ class RegestrationView(APIView):
             saved_account = serializer.save()
             token, created = Token.objects.get_or_create(user=saved_account)
 
-            return Response(
+            response = Response(
                 {
-                    "token": token.key,
                     "username": saved_account.username,
                     "email": saved_account.email,
                 },
                 status=status.HTTP_200_OK,
             )
 
+            response.set_cookie(
+                key="auth_token",
+                value=token.key,
+                httponly=True,
+                secure=True,
+                samesite="Lax",
+                max_age=24 * 60 * 60,
+            )
+
+            return response
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomLoginView(ObtainAuthToken):
     """
-    Login des Benutzer mit Email ,Passwort als return obj mit token oder Error.
+    Login des Benutzer mit Email ,Passwort als return obj mit cookie.token oder Error.
     """
 
     permission_classes = [AllowAny]
@@ -56,10 +64,21 @@ class CustomLoginView(ObtainAuthToken):
             user = serializer.validated_data["user"]
             token, created = Token.objects.get_or_create(user=user)
 
-            return Response(
-                {"token": token.key, "username": user.username, "email": user.email},
+            response = Response(
+                {"username": user.username, "email": user.email},
                 status=status.HTTP_200_OK,
             )
+
+            response.set_cookie(
+                key="auth_token",
+                value=token.key,
+                httponly=True,
+                secure=True,
+                samesite="Lax",
+                max_age=24 * 60 * 60,
+            )
+
+            return response
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,3 +102,20 @@ class VerifyTokenView(APIView):
                 )
             return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# TODO: Vertify noch nötig , wenn HTTP only token ?`
+
+class LogoutView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        response.delete_cookie('auth_token')
+
+        try:
+            request.auth.delete()  
+        except:
+            pass
+
+        return response
