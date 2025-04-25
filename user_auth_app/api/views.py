@@ -30,7 +30,6 @@ class RegestrationView(APIView):
             response = Response(
                 {
                     "username": saved_account.username,
-                    "email": saved_account.email,
                 },
                 status=status.HTTP_200_OK,
             )

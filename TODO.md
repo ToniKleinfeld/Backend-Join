@@ -27,7 +27,7 @@
 - [x] `UserSerializer`
 - [x] `ContactSerializer`
 - [x] `SubtaskSerializer`
-- [ ] `TaskSerializer`
+- [x] `TaskSerializer`
   - Inkl. Nested `SubtaskSerializer`
   - `assigned_users` als PrimaryKeyRelatedField
 
@@ -40,15 +40,15 @@
 
 ## 📂 Views & ViewSets
 
-- [ ] `UserViewSet`
+- [x] `UserViewSet`
   - `list`, `retrieve`
-- [ ] `ContactViewSet`
+- [x] `ContactViewSet`
   - CRUD-Methoden
   - Queryset gefiltert nach `owner=request.user`
 - [ ] `TaskViewSet`
   - CRUD-Methoden
   - Nested Routes für Subtasks optional
-- [ ] `SubtaskViewSet`
+- [x] `SubtaskViewSet`
   - CRUD-Methoden
   - `perform_create` mit `task_id`
 
@@ -73,3 +73,5 @@ urlpatterns = [
 ]
 # Nicht final!
 ```
+
+-[x] HTTP only cookie token
