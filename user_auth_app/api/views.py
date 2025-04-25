@@ -110,6 +110,18 @@ class VerifyTokenView(APIView):
         return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
 
 
+class PingCookieView(APIView):
+    """
+    Gibt 200 OK zurück, wenn das 'auth_token' HttpOnly-Cookie im Request enthalten ist,
+    sonst 204 No Content.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if 'auth_token' in request.COOKIES:
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
