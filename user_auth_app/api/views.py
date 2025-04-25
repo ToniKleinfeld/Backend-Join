@@ -65,7 +65,7 @@ class CustomLoginView(ObtainAuthToken):
             token, created = Token.objects.get_or_create(user=user)
 
             response = Response(
-                {"username": user.username, "email": user.email},
+                {"username": user.username},
                 status=status.HTTP_200_OK,
             )
 
