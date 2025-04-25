@@ -39,7 +39,8 @@ class RegestrationView(APIView):
                 key="auth_token",
                 value=token.key,
                 httponly=True,
-                secure=True,
+                secure=False,
+                domain="localhost",
                 samesite="Lax",
                 max_age=24 * 60 * 60,
             )
@@ -73,6 +74,7 @@ class CustomLoginView(ObtainAuthToken):
                 value=token.key,
                 httponly=True,
                 secure=True,
+                domain="localhost",
                 samesite="Lax",
                 max_age=24 * 60 * 60,
             )
@@ -80,6 +82,8 @@ class CustomLoginView(ObtainAuthToken):
             return response
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # TODO: secure=True , wenn in Production !!!
 
 
 class VerifyTokenView(APIView):
@@ -90,29 +94,37 @@ class VerifyTokenView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        token_key = request.COOKIES.get('auth_token')
+        token_key = request.COOKIES.get("auth_token")
         if not token_key:
-            return Response({'detail': 'No token cookie.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "No token cookie."}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
         try:
             Token.objects.get(key=token_key)
         except Token.DoesNotExist:
-            return Response({'detail': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Invalid token."}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
-        return Response({'detail': 'Token is valid.'}, status=status.HTTP_200_OK)
+        return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
 
-# TODO: testen funktion
 
 class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        
+
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie('auth_token')
+        response.delete_cookie(
+            key="auth_token",
+            domain="localhost",   
+            path="/",             
+            samesite="Lax"        
+        )
 
         try:
-            request.auth.delete()  
+            request.auth.delete()
         except:
             pass
 
