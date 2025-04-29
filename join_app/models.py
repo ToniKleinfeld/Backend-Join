@@ -11,7 +11,7 @@ class Contact(models.Model):
     def __str__(self):
         return f"{self.name} ({self.email})"
 
-# TODO: Contacts werden je eingelogten Account angezeigt , warum tasks nicht? nachlesen , was mach ich hier anderes?
+# TODO: Contacts werden je eingelogten Account angezeigt , warum tasks nicht? nachlesen , was mach ich hier anderes? vermutung in der view --> get_query --> dort wird gefiltert! 
 
 class Task(models.Model):
     creator = models.ForeignKey(
