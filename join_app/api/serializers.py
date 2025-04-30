@@ -2,11 +2,10 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from join_app.models import Contact, Task, SubTask
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username"]
 
 
 class ContactSerializer(serializers.ModelSerializer):

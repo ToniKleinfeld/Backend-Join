@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserView, ContactViewSet , TaskViewSet, SubTaskViewSet
+from .views import UserView, ContactViewSet , TaskViewSet, SubTaskViewSet 
 
 router = DefaultRouter()
 router.register(r'users', UserView)
@@ -24,4 +24,5 @@ urlpatterns = [
         }),
         name="task-subtask-detail"
     ),
+    # path("me/", .as_view({"get":"list"}), name="current-user"),
 ]
