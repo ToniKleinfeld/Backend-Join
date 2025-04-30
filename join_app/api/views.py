@@ -3,7 +3,6 @@ from rest_framework import viewsets, permissions
 from .serializers import (
     ContactSerializer,
     UserSerializer,
-    UserWithContactsSerializer,
     TaskSerializer,
     SubTaskSerializer,
     TaskWriteSerializer,
@@ -12,6 +11,8 @@ from join_app.models import Contact, Task, SubTask
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+
 class UserView(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -39,11 +40,8 @@ class ContactViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
-        
-        return Task.objects.filter(
-            Q(creator=user) |
-            Q(assigned_users=user)
-        ).distinct()
+
+        return Task.objects.filter(Q(creator=user) | Q(assigned_users=user)).distinct()
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
@@ -52,8 +50,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
-
-    # TODO: Prüfung funktion , einbindung query in tasks filter?
 
 
 class SubTaskViewSet(viewsets.ModelViewSet):

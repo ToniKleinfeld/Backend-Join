@@ -24,5 +24,4 @@ urlpatterns = [
         }),
         name="task-subtask-detail"
     ),
-    # path("me/", .as_view({"get":"list"}), name="current-user"),
 ]

@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from join_app.models import Contact, Task, SubTask
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -17,7 +18,7 @@ class ContactSerializer(serializers.ModelSerializer):
 class SubTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubTask
-        fields = ["id","task", "title", "done"]
+        fields = ["id", "task", "title", "done"]
         read_only_fields = ["task"]
 
 
@@ -76,9 +77,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskWriteSerializer(serializers.ModelSerializer):
-    subtasks = SubTaskSerializer(
-        many=True, required=False, write_only=True
-    )
+    subtasks = SubTaskSerializer(many=True, required=False, write_only=True)
     assigned_users = serializers.ListField(
         child=serializers.IntegerField(), required=False, write_only=True
     )
@@ -136,15 +135,5 @@ class TaskWriteSerializer(serializers.ModelSerializer):
                 title=subtask_item.get("title", ""),
                 done=subtask_item.get("done", False),
             )
-            
+
         return task
-    
-    # TODO: nur Tasks einem user anzeigen lassen , welche er erstellt oder zugewiesen wurde
-
-class UserWithContactsSerializer(UserSerializer, serializers.ModelSerializer):
-    contacts = ContactSerializer(many=True, read_only=True)
-    created_tasks = TaskSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ["id", "username", "email", "contacts","assigned_tasks","created_tasks"]

@@ -45,7 +45,7 @@
 - [x] `ContactViewSet`
   - CRUD-Methoden
   - Queryset gefiltert nach `owner=request.user`
-- [ ] `TaskViewSet`
+- [x] `TaskViewSet`
   - CRUD-Methoden
   - Nested Routes für Subtasks optional
 - [x] `SubtaskViewSet`
