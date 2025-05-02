@@ -3,6 +3,7 @@
 ## 📦 Models
 
 - [x] `User` (Built-in oder CustomUser)
+- [ ] `GuestLogin?` 
 - [x] `Contact`
   - `name: CharField`
   - `email: EmailField`
@@ -74,4 +75,5 @@ urlpatterns = [
 # Nicht final!
 ```
 
--[x] HTTP only cookie token
+- [x] `HTTP only cookie token`
+- [ ] `Default 'User' erstellen (Für Guest account -> 'default Tasks und Contacts') ? ohne db.sqlite3 mitzusenden? evtl mit zusätzlichen Sript , erklärt in Readme später? `

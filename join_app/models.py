@@ -10,6 +10,8 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.email})"
+    
+    #TODO: User und Contacte sollten beim erstellen noch eine Zufällige farbe bekommen!
 
 class Task(models.Model):
     creator = models.ForeignKey(
