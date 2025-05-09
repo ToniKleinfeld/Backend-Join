@@ -11,8 +11,7 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.email})"
-    
-    #TODO: User und Contacte sollten beim erstellen noch eine Zufällige farbe bekommen!
+
 
 class Task(models.Model):
     creator = models.ForeignKey(
@@ -54,6 +53,7 @@ class SubTask(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
