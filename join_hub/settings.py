@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "user_auth_app",
+    'user_auth_app.apps.UserAuthAppConfig',
     "join_app",
 ]
 

@@ -20,7 +20,6 @@ class RegestrationView(APIView):
     def post(self, request):
         serializer = RegistrationsSerializer(data=request.data)
 
-        data = {}
         if serializer.is_valid():
             saved_account = serializer.save()
             token, created = Token.objects.get_or_create(user=saved_account)

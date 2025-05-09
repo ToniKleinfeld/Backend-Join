@@ -1,12 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from join_app.models import Contact, Task, SubTask
+from join_app.models import Profile
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["color"]
 
 
 class UserSerializer(serializers.ModelSerializer):
+    color = serializers.CharField(source="profile.color", read_only=True)
+
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ["id", "username", "color"]
 
 
 class ContactSerializer(serializers.ModelSerializer):
