@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = ["id", "name", "email", "phone"]
+        fields = ["id", "name", "email", "phone", "bgcolor"]
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
