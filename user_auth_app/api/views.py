@@ -78,7 +78,7 @@ class CustomLoginView(ObtainAuthToken):
             return response
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # TODO: secure=True , wenn in Production !!!
 
 
@@ -111,29 +111,30 @@ class PingCookieView(APIView):
     Gibt 200 OK zurück, wenn das 'auth_token' HttpOnly-Cookie im Request enthalten ist,
     sonst 204 No Content.
     """
+
     permission_classes = [AllowAny]
 
     def post(self, request):
-        if 'auth_token' in request.COOKIES:
+        if "auth_token" in request.COOKIES:
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class LogoutView(APIView):
+
     permission_classes = [AllowAny]
 
     def post(self, request):
 
         response = Response(status=status.HTTP_204_NO_CONTENT)
         response.delete_cookie(
-            key="auth_token",
-            domain="localhost",   
-            path="/",             
-            samesite="Lax"        
+            key="auth_token", domain="localhost", path="/", samesite="Lax"
         )
 
-        try:
-            request.auth.delete()
-        except:
-            pass
+        if request.auth:
+            try:
+                request.auth.delete()
+            except Exception as e:
+                pass
 
         return response

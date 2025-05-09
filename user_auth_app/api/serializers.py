@@ -50,7 +50,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         user = authenticate(
             username=email, password=password
-        )  # E-Mail wird als username übergeben
+        ) 
 
         if user is None:
             raise serializers.ValidationError(
