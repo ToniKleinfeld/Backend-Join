@@ -48,9 +48,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         email = attrs.get("email")
         password = attrs.get("password")
 
-        user = authenticate(
-            username=email, password=password
-        ) 
+        user = authenticate(username=email, password=password)
 
         if user is None:
             raise serializers.ValidationError(
@@ -59,3 +57,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class GuestCreationSerializer(serializers.Serializer):
+    username = serializers.CharField(read_only=True)

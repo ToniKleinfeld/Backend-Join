@@ -1,5 +1,12 @@
 from django.urls import path
-from .views import RegestrationView , CustomLoginView, LogoutView ,VerifyTokenView, PingCookieView
+from .views import (
+    RegestrationView,
+    CustomLoginView,
+    LogoutView,
+    VerifyTokenView,
+    PingCookieView,
+    CreateGuestView,
+)
 
 urlpatterns = [
     path("registration/", RegestrationView.as_view(), name="regestration"),
@@ -7,4 +14,5 @@ urlpatterns = [
     path("verify/", VerifyTokenView.as_view(), name="token-verify"),
     path("ping-cookie/", PingCookieView.as_view(), name="ping-cookie"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("create-guest/", CreateGuestView.as_view(), name="create-guest"),
 ]
