@@ -4,29 +4,81 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from join_app.models import GuestProfile, Task, Contact
+from django.utils.crypto import get_random_string
+from join_app.models import Profile
+import random
+
+
+def random_hex_color():
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
 
 # Placeholder‑User
 PLACEHOLDER_USERS = [
-    {"id": 555, "username": "anja-schulz", "email": "schulz@gmail.com"},
-    {"id": 556, "username": "anton-mayer", "email": "anton@gmx.com"},
-    {"id": 557, "username": "benedikt-ziegler", "email": "benedikt@googlemail.com"},
-    {"id": 558, "username": "david-eisenberg", "email": "davidberg@hotmail.de"},
-    {"id": 559, "username": "emmanuel-mauer", "email": "emmalnuelma@live.com"},
-    {"id": 560, "username": "eva-fischer", "email": "eva@gmx.com"},
-    {"id": 561, "username": "marcel-bauer", "email": "bauer@gmail.com"},
-    {"id": 562, "username": "tatjana-wolf", "email": "wolfi@gmx.com"},
+    {
+        "id": 555,
+        "username": "anja-schulz",
+        "email": "schulz@gmail.com",
+        "color": random_hex_color(),
+    },
+    {
+        "id": 556,
+        "username": "anton-mayer",
+        "email": "anton@gmx.com",
+        "color": random_hex_color(),
+    },
+    {
+        "id": 557,
+        "username": "benedikt-ziegler",
+        "email": "benedikt@googlemail.com",
+        "bgcocolorlor": random_hex_color(),
+    },
+    {
+        "id": 558,
+        "username": "david-eisenberg",
+        "email": "davidberg@hotmail.de",
+        "color": random_hex_color(),
+    },
+    {
+        "id": 559,
+        "username": "emmanuel-mauer",
+        "email": "emmalnuelma@live.com",
+        "bgccolorolor": random_hex_color(),
+    },
+    {
+        "id": 560,
+        "username": "eva-fischer",
+        "email": "eva@gmx.com",
+        "color": random_hex_color(),
+    },
+    {
+        "id": 561,
+        "username": "marcel-bauer",
+        "email": "bauer@gmail.com",
+        "color": random_hex_color(),
+    },
+    {
+        "id": 562,
+        "username": "tatjana-wolf",
+        "email": "wolfi@gmx.com",
+        "color": random_hex_color(),
+    },
 ]
 
 
 def ensure_placeholder_users():
     for data in PLACEHOLDER_USERS:
         if not User.objects.filter(id=data["id"]).exists():
-            User.objects.create_user(
+            user = User.objects.create_user(
                 id=data["id"],
                 username=data["username"],
                 email=data["email"],
-                password=User.objects.make_random_password(),
+                password=get_random_string(length=12),
             )
+
+            profile = user.profile
+            profile.color = data.get("color", profile.color)
+            profile.save()
 
 
 # Abgelaufene Guests löschen
@@ -40,9 +92,10 @@ def cleanup_expired_guests():
 # Gast anlegen (User + Profile + Token + Cookie-Value)
 def create_guest_user():
     random_str = uuid.uuid4().hex[:8]
+    username= "guest"
     email = f"guest_{random_str}@example.com"
     guest = User.objects.create_user(
-        username=email, email=email, password=User.objects.make_random_password()
+        username=username, email=email, password=get_random_string(length=12)
     )
 
     GuestProfile.create_for_user(guest, days=1)
@@ -62,11 +115,11 @@ def create_guest_tasks(guest):
 
     specs = [
         {
-            "rubric": "in progress",
+            "rubric": "In progress",
             "title": "Kochwelt Page & Recipe Recommender",
             "description": "Build start page with recipe recommendation.",
-            "due": (2024, 10, 25),
-            "category": "User story",
+            "due": (2025, 10, 25),
+            "category": "User Story",
             "prio": "medium",
             "assigned": [559, 561, 556, 557, 558],
             "subtasks": [
@@ -78,7 +131,7 @@ def create_guest_tasks(guest):
             "rubric": "Await feedback",
             "title": "CSS Architecture Planning",
             "description": "Define CSS naming conventions and structure.",
-            "due": (2024, 9, 30),
+            "due": (2025, 9, 30),
             "category": "Technical Task",
             "prio": "urgent",
             "assigned": [560, 557, 559],
@@ -91,18 +144,18 @@ def create_guest_tasks(guest):
             "rubric": "Await feedback",
             "title": "HTML Base Template Creation",
             "description": "Create reuseable HTML base templates",
-            "due": (2024, 10, 15),
+            "due": (2025, 10, 15),
             "category": "Technical Task",
             "prio": "low",
             "assigned": [558, 557, 555],
             "subtasks": [],
         },
         {
-            "rubric": "to do",
+            "rubric": "To do",
             "title": "Daily Kochwelt Recipe",
             "description": "Implement daily recipe and portion calculator",
-            "due": (2024, 11, 12),
-            "category": "User story",
+            "due": (2025, 11, 12),
+            "category": "User Story",
             "prio": "medium",
             "assigned": [560, 555, 562],
             "subtasks": [],
@@ -111,10 +164,10 @@ def create_guest_tasks(guest):
             "rubric": "Done",
             "title": "Bring Join on Stage",
             "description": "Let's finish this projekt until next week!",
-            "due": (2024, 9, 20),
+            "due": (2025, 9, 20),
             "category": "User Story",
             "prio": "urgent",
-            "assigned": "guest",
+            "assigned": ["guest"],
             "subtasks": [
                 {"done": True, "title": "Contacts"},
                 {"done": True, "title": "Add Task"},
