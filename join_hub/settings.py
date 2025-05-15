@@ -151,6 +151,3 @@ AUTHENTICATION_BACKENDS = [
     "join_hub.authentication.EmailAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
-
-
-#TODO:   Prüfen ob es möglich ist einen "Gäste account" in irgendeiner weise zu erstellen , mit "Default" Contacts und Tasks , weiter einige "Default" user für assigned to listen.
