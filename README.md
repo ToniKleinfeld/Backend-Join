@@ -26,7 +26,7 @@ cp .env.example .env
 How to start local server:
 
 ```sh
-python manage.py runserver
+python manage.py runserver localhost:8000
 ```
 
 ## More Infos
