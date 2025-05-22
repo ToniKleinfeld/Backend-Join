@@ -51,42 +51,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "subtasks",
         ]
 
-    def create(self, validated_data):
-        subtasks_data = validated_data.pop("subtasks", [])
-        assigned_users_data = validated_data.pop("assigned_users", [])
-
-        task = Task.objects.create(**validated_data)
-
-        if assigned_users_data:
-            task.assigned_users.set(assigned_users_data)
-
-        for subtask_data in subtasks_data:
-            SubTask.objects.create(task=task, **subtask_data)
-
-        return task
-
-    def update(self, instance, validated_data):
-        subtasks_data = validated_data.pop("subtasks", None)
-        assigned_users_data = validated_data.pop("assigned_users", None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        if assigned_users_data is not None:
-            instance.assigned_users.set(assigned_users_data)
-
-        if subtasks_data is not None:
-            instance.subtasks.all().delete()
-
-            for subtask_data in subtasks_data:
-                SubTask.objects.create(task=instance, **subtask_data)
-
-        return instance
-
 
 class TaskWriteSerializer(serializers.ModelSerializer):
-    subtasks = SubTaskSerializer(many=True, required=False, write_only=True)
+    subtasks = SubTaskSerializer(many=True, required=False)
     assigned_users = serializers.ListField(
         child=serializers.IntegerField(), required=False, write_only=True
     )
@@ -135,8 +102,8 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         task = Task.objects.create(**validated_data)
 
         if assigned_user_ids:
-            assigned_users = User.objects.filter(id__in=assigned_user_ids)
-            task.assigned_users.set(assigned_users)
+            user = User.objects.filter(id__in=assigned_user_ids)
+            task.assigned_users.set(user)
 
         for subtask_item in subtasks_data:
             SubTask.objects.create(
@@ -146,3 +113,22 @@ class TaskWriteSerializer(serializers.ModelSerializer):
             )
 
         return task
+    
+    def update(self, instance, validated_data):
+        assigned_user_ids = validated_data.pop("assigned_users", None)
+        subtasks_data = validated_data.pop("subtasks", None)
+
+        for attr, val in validated_data.items():
+            setattr(instance, attr, val)
+        instance.save()
+
+        if assigned_user_ids is not None:
+            users = User.objects.filter(pk__in=assigned_user_ids)
+            instance.assigned_users.set(users)
+
+        if subtasks_data is not None:
+            instance.subtasks.all().delete()
+            for sub in subtasks_data:
+                SubTask.objects.create(task=instance, **sub)
+
+        return instance
