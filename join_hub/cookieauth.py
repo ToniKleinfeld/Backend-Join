@@ -5,6 +5,9 @@ from rest_framework import exceptions
 from rest_framework.authtoken.models import Token
 
 class CookieTokenAuthentication(BaseAuthentication):
+    """
+    Liest 'auth_token' Cookie aus und prüft, ob es Gültig ist.
+    """
     def authenticate(self, request):
         token_key = request.COOKIES.get('auth_token')
         if not token_key:

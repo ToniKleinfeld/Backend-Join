@@ -6,6 +6,9 @@ import random
 
 
 def random_hex_color():
+    """
+    Erstellt eine Zufällig Hex Farbe
+    """
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
 class Contact(models.Model):
@@ -62,6 +65,9 @@ class SubTask(models.Model):
 
 
 class GuestProfile(models.Model):
+    """
+    Guest User model , mit Ablaufzeit
+    """
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="guest_profile"
     )
@@ -77,6 +83,9 @@ class GuestProfile(models.Model):
         return timezone.now() > self.expires_at
 
 class Profile(models.Model):
+    """
+    Profile , wird bei erstellung eines Users per signal hinzugefügt , für zuweisung einer user Farbe 
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     color = models.CharField(max_length=10, default=random_hex_color())
 

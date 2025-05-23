@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from .serializers import (
     RegistrationsSerializer,
-    CustomAuthTokenSerializer,
+    LoginSerializer,
     GuestCreationSerializer,
 )
 from rest_framework import status
@@ -63,7 +63,7 @@ class CustomLoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = CustomAuthTokenSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
 
         if serializer.is_valid():
             user = serializer.validated_data["user"]
@@ -128,9 +128,10 @@ class PingCookieView(APIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 class LogoutView(APIView):
-
+    """
+    View für Logout um Http Only cookie zu löschen
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -148,8 +149,11 @@ class LogoutView(APIView):
 
         return response
 
-
 class CreateGuestView(APIView):
+    """
+    View für Guest Log In , mit HTTP Only Cookie
+    """
+
     permission_classes = [AllowAny]
 
     def post(self, request):

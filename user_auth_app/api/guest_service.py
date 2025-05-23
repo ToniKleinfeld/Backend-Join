@@ -10,6 +10,9 @@ import random
 
 
 def random_hex_color():
+    """
+    Erstellt eine Zufällig Hex Farbe
+    """
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
 
@@ -67,6 +70,9 @@ PLACEHOLDER_USERS = [
 
 
 def ensure_placeholder_users():
+    """
+    Legt placeholder User an, wenn nicht vorhanden und ID nicht vergeben wurde
+    """
     for data in PLACEHOLDER_USERS:
         if not User.objects.filter(id=data["id"]).exists():
             user = User.objects.create_user(
@@ -81,18 +87,22 @@ def ensure_placeholder_users():
             profile.save()
 
 
-# Abgelaufene Guests löschen
 def cleanup_expired_guests():
+    """
+    Abgelaufene Guests löschen
+    """
     now = timezone.now()
     expired = GuestProfile.objects.filter(expires_at__lt=now)
     for gp in expired:
         gp.user.delete()
 
 
-# Gast anlegen (User + Profile + Token + Cookie-Value)
 def create_guest_user():
+    """
+    Gast anlegen (User + Profile + Token + Cookie-Value)
+    """
     random_str = uuid.uuid4().hex[:8]
-    username= "guest"
+    username = "guest"
     email = f"guest_{random_str}@example.com"
     guest = User.objects.create_user(
         username=username, email=email, password=get_random_string(length=12)
@@ -104,8 +114,10 @@ def create_guest_user():
     return guest, token.key
 
 
-# Dummy‑Tasks
 def create_guest_tasks(guest):
+    """
+    Legt Tasks für den Guest an
+    """
 
     def future_date(year, month, day):
         today = date.today()
@@ -197,8 +209,10 @@ def create_guest_tasks(guest):
     return tasks
 
 
-# Dummy‑Contacts
 def create_guest_contacts(guest):
+    """
+    Legt Contacts für den Guest an
+    """
     contact_specs = [
         {
             "name": "Anja Schulz",

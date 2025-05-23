@@ -2,8 +2,10 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-
 class RegistrationsSerializer(serializers.ModelSerializer):
+    """
+    Anlegen eines Neuen User Profils
+    """
     repeated_password = serializers.CharField(write_only=True)
     color = serializers.CharField(write_only=True, source="profile.color")
 
@@ -37,8 +39,10 @@ class RegistrationsSerializer(serializers.ModelSerializer):
 
         return account
 
-
-class CustomAuthTokenSerializer(serializers.Serializer):
+class LoginSerializer(serializers.Serializer):
+    """
+    User Log in Prüfung
+    """
     email = serializers.EmailField()
     password = serializers.CharField(
         style={"input_type": "password"}, trim_whitespace=False
@@ -58,6 +62,8 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         attrs["user"] = user
         return attrs
 
-
 class GuestCreationSerializer(serializers.Serializer):
+    """
+    Guest Login
+    """   
     username = serializers.CharField(read_only=True)

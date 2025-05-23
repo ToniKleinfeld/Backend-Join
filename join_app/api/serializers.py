@@ -32,6 +32,9 @@ class SubTaskSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    """
+    Tasks Serializer für Tasks Abfragen , Löschen
+    """
     creator = UserSerializer(read_only=True)
     subtasks = SubTaskSerializer(many=True, required=False)
     assigned_users = UserSerializer(many=True, required=False)
@@ -53,6 +56,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskWriteSerializer(serializers.ModelSerializer):
+    """
+    Tasks Serializer zum Erstellen , Abändern
+    """
     subtasks = SubTaskSerializer(many=True, required=False)
     assigned_users = serializers.ListField(
         child=serializers.IntegerField(), required=False, write_only=True
