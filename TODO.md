@@ -72,7 +72,7 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/', include(router.urls)),
 ]
-# Nicht final!
+# Nicht final! Können Abweichen!
 ```
 
 - [x] `HTTP only cookie token`
