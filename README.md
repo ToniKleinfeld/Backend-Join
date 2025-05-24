@@ -18,7 +18,14 @@ pip install -r requirements.txt
 > create your .env file and fill your data
 
 ```sh
-cp .env.example .env
+cp .env.example .env 
+```
+
+>[!NOTE]
+> Or create your env file with a random generatet key and default settings
+
+```sh
+python setup_env.py
 ```
 
 ## How to use
