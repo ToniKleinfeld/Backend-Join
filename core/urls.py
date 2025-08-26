@@ -1,5 +1,5 @@
 """
-URL configuration for join_hub project.
+URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,10 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/join/', include('join_app.api.urls')),
-    path('api/auth/', include('user_auth_app.api.urls')),
+    path("admin/", admin.site.urls),
+    path("api/join/", include("join_app.api.urls")),
+    path("api/auth/", include("user_auth_app.api.urls")),
 ]
