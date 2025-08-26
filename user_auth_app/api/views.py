@@ -101,16 +101,12 @@ class VerifyTokenView(APIView):
     def post(self, request):
         token_key = request.COOKIES.get("auth_token")
         if not token_key:
-            return Response(
-                {"detail": "No token cookie."}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"detail": "No token cookie."}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
             Token.objects.get(key=token_key)
         except Token.DoesNotExist:
-            return Response(
-                {"detail": "Invalid token."}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"detail": "Invalid token."}, status=status.HTTP_401_UNAUTHORIZED)
 
         return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
 
@@ -128,26 +124,27 @@ class PingCookieView(APIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class LogoutView(APIView):
     """
     View für Logout um Http Only cookie zu löschen
     """
+
     permission_classes = [AllowAny]
 
     def post(self, request):
 
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie(
-            key="auth_token", domain="localhost", path="/", samesite="Lax"
-        )
+        response.delete_cookie(key="auth_token", domain="localhost", path="/", samesite="Lax")
 
         if request.auth:
             try:
                 request.auth.delete()
-            except Exception as e:
+            except Exception:
                 pass
 
         return response
+
 
 class CreateGuestView(APIView):
     """
@@ -164,9 +161,7 @@ class CreateGuestView(APIView):
         create_guest_tasks(guest)
         create_guest_contacts(guest)
 
-        resp = Response(
-            GuestCreationSerializer(guest).data, status=status.HTTP_201_CREATED
-        )
+        resp = Response(GuestCreationSerializer(guest).data, status=status.HTTP_201_CREATED)
         resp.set_cookie(
             key="auth_token",
             value=token_key,

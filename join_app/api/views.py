@@ -17,6 +17,7 @@ class UserView(viewsets.ReadOnlyModelViewSet):
     """
     User viewset Um Userliste abzurufen
     """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -34,6 +35,7 @@ class ContactViewSet(viewsets.ModelViewSet):
     """
     Contact viewset um Contacts des derzeitigen Users anzuzeigen
     """
+
     serializer_class = ContactSerializer
 
     def get_queryset(self):
@@ -47,6 +49,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     """
     Tasks viewset um Tasks des derzeitigen Users anzuzeigen
     """
+
     def get_queryset(self):
         user = self.request.user
 
@@ -63,8 +66,9 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 class SubTaskViewSet(viewsets.ModelViewSet):
     """
-    Subtasksviewset um einzelne subTasks in einer Task abzuändern 
+    Subtasksviewset um einzelne subTasks in einer Task abzuändern
     """
+
     serializer_class = SubTaskSerializer
 
     def get_queryset(self):

@@ -104,9 +104,7 @@ def create_guest_user():
     random_str = uuid.uuid4().hex[:8]
     username = "guest"
     email = f"guest_{random_str}@example.com"
-    guest = User.objects.create_user(
-        username=username, email=email, password=get_random_string(length=12)
-    )
+    guest = User.objects.create_user(username=username, email=email, password=get_random_string(length=12))
 
     GuestProfile.create_for_user(guest, days=1)
 
