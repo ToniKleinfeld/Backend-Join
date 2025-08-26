@@ -13,23 +13,32 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 
-env = environ.Env(DEBUG=(bool, False))
-
-environ.Env.read_env()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(DEBUG=(bool, False))
+local_env_path = BASE_DIR / ".env"
+
+if local_env_path.exists():
+    env.read_env(local_env_path)
+
+if env.bool("RELOAD_ENV", default=True) and local_env_path.exists():
+    environ.Env.read_env(local_env_path, override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+# SECURITY WARNING: keep the secret key used in production secret!
+if DEBUG:
+    SECRET_KEY = env("SECRET_KEY", default="insecure-default-key-for-dev")
+else:
+    SECRET_KEY = env("SECRET_KEY")
+
+ALLOWED_HOSTS = env.list("JOIN_HOST", default=["localhost", "127.0.0.1"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default="http://localhost:4200")
 
 
 # Application definition
@@ -83,12 +92,24 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if env.bool("DEBUG", default=True):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("JOIN_DB", default="join_db"),
+            "USER": env("JOIN_DB_USER", default="join_user"),
+            "PASSWORD": env("JOIN_DB_PASSWORD", default="supersecretpassword"),
+            "HOST": env("DB_HOST", default="db"),
+            "PORT": env("DB_PORT", default=5432),
+        }
+    }
 
 
 # Password validation
@@ -126,15 +147,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = [
-    env("CORS_ALLOWED_ORIGINS"),
-]
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://127.0.0.1:4200", "http://localhost:4200"])
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -145,6 +167,9 @@ REST_FRAMEWORK = {
         "core.cookieauth.ExpiringCookieTokenAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_THROTTLE_RATES": {
+        "default": "1000/day",
+    },
 }
 
 AUTHENTICATION_BACKENDS = [
