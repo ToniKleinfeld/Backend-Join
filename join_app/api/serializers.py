@@ -35,6 +35,7 @@ class TaskSerializer(serializers.ModelSerializer):
     """
     Tasks Serializer für Tasks Abfragen , Löschen
     """
+
     creator = UserSerializer(read_only=True)
     subtasks = SubTaskSerializer(many=True, required=False)
     assigned_users = UserSerializer(many=True, required=False)
@@ -59,10 +60,9 @@ class TaskWriteSerializer(serializers.ModelSerializer):
     """
     Tasks Serializer zum Erstellen , Abändern
     """
+
     subtasks = SubTaskSerializer(many=True, required=False)
-    assigned_users = serializers.ListField(
-        child=serializers.IntegerField(), required=False, write_only=True
-    )
+    assigned_users = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
 
     class Meta:
         model = Task
@@ -80,9 +80,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
     def validate_rubric(self, value):
         valid_values = dict(Task.RUBRIC_CHOICES).keys()
         if value not in valid_values:
-            raise serializers.ValidationError(
-                f"Ungültiger Rubrik-Wert. Muss einer dieser Werte sein: {valid_values}"
-            )
+            raise serializers.ValidationError(f"Ungültiger Rubrik-Wert. Muss einer dieser Werte sein: {valid_values}")
         return value
 
     def validate_category(self, value):
@@ -119,7 +117,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
             )
 
         return task
-    
+
     def update(self, instance, validated_data):
         assigned_user_ids = validated_data.pop("assigned_users", None)
         subtasks_data = validated_data.pop("subtasks", None)

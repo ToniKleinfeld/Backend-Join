@@ -1,0 +1,12 @@
+{
+    "black-formatter.args": [
+        "--config",
+        "black.ini" // Pointing to your black.ini configuration
+    ],
+    "flake8.args": [
+        "--config",
+        "flake8.ini"
+    ],
+    "editor.formatOnSave": true,
+    "postman.settings.dotenv-detection-notification-visibility": false // Format on save
+}
