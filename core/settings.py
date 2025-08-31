@@ -37,7 +37,7 @@ if DEBUG:
 else:
     SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = env.list("JOIN_HOST", default=["localhost", "127.0.0.1"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default="http://localhost:4200")
 
 
@@ -103,9 +103,9 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("JOIN_DB", default="join_db"),
-            "USER": env("JOIN_DB_USER", default="join_user"),
-            "PASSWORD": env("JOIN_DB_PASSWORD", default="supersecretpassword"),
+            "NAME": env("DB", default="join_db"),
+            "USER": env("DB_USER", default="join_user"),
+            "PASSWORD": env("DB_PASSWORD", default="supersecretpassword"),
             "HOST": env("DB_HOST", default="db"),
             "PORT": env("DB_PORT", default=5432),
         }
@@ -156,7 +156,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://127.0.0.1:4200", "http://localhost:4200"])
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["https://127.0.0.1:4200", "https://localhost:4200"])
 
 CORS_ALLOW_CREDENTIALS = True
 
